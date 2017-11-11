@@ -1196,7 +1196,7 @@ chalk@^2.0.1, chalk@^2.3.0:
     escape-string-regexp "^1.0.5"
     supports-color "^4.0.0"
 
-chart.js@^2.7.1:
+chart.js@^2.3.0, chart.js@^2.7.1:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.7.1.tgz#ae90b4aa4ff1f02decd6b1a2a8dabfd73c9f9886"
   dependencies:
@@ -2977,6 +2977,13 @@ hawk@~6.0.2:
     cryptiles "3.x.x"
     hoek "4.x.x"
     sntp "2.x.x"
+
+hchs-vue-charts@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/hchs-vue-charts/-/hchs-vue-charts-1.2.8.tgz#91fd09224ab38cfd3bac1d2427f0ce5cbd57664f"
+  dependencies:
+    chart.js "^2.3.0"
+    vue "^2.0.1"
 
 he@1.1.1, he@1.1.x, he@^1.1.0:
   version "1.1.1"
@@ -6329,7 +6336,7 @@ vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
 
-vue@^2.5.2:
+vue@^2.0.1, vue@^2.5.2:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.3.tgz#e1a3b1f49b6e93e574ce040b95cbc873912fecc1"
 

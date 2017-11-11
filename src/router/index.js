@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import MainPage from '@/components/MainPage';
-import CommitChart from '@/components/CommitChart';
+import BarChart from '@/components/BarChart';
 
 Vue.use(Router);
 
@@ -14,8 +14,8 @@ export default new Router({
     },
     {
       path: '/chart',
-      name: 'Commit Chart',
-      component: CommitChart,
+      name: 'BarChart',
+      component: BarChart,
     },
   ],
 });
