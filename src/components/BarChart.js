@@ -1,11 +1,20 @@
 import { Line, mixins } from 'vue-chartjs';
 
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  elements: {
+    line: {
+      tension: 0,
+    },
+  },
+};
+
 const BarChart = {
   extends: Line,
   mixins: [mixins.reactiveProp],
-  props: ['options'],
   mounted() {
-    this.renderChart(this.chartData, this.options);
+    this.renderChart(this.chartData, options);
   },
 };
 

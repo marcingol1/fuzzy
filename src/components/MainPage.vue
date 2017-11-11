@@ -1,21 +1,74 @@
 <template>
   <div class="container">
-    <h2>Enter fuzzy logic data</h2>
-    <br>
-    <label for="ruleName">Name of variable:</label>
-    <input type="text" id="ruleName" v-model="newRuleData.name">
-    <label for="ruleValue">Value of variable:</label>
-    <input type="number" id="ruleValue" v-model="newRuleData.value">
-    <button @click="addRule">Add Rule</button>
-    <br>
-    <h4>Data of new rule: </h4>
-    <p> Name: {{newRuleData.name}}, value: {{newRuleData.value}}</p>
-    <ul>
-      <li></li>
+
+    <section class="project-data">
+      <h3>Project data</h3>
+      <label for="project-name">Enter name of your project:</label>
+      <input type="text" id="project-name" v-model="projectName">
+      <br>
+      <h2><strong>{{ projectName }}</strong></h2>
+    </section>
+
+    <section class="project-variables">
+      <form v-on:submit.prevent>
+        <h4 @click="swapVariable">
+          <span v-if="variableType === 'input'">Input</span>
+          <span v-if="variableType === 'output'">Input</span> 
+          variables
+        </h4>
+        <label for="variableName">Name:</label>
+        <input type="text" id="ruleName" v-model="newVariableData.name">
+        <br>
+        <label for="ruleRangeStart">Range:</label>
+        <input type="number" step="any" id="ruleRangeStart" v-model="newVariableData.start">
+        <label for="ruleRangeEnd">Range:</label>
+        <input type="number" step="any" id="ruleRangeEnd" v-model="newVariableData.end">
+        <button @click="addInput">Add Rule</button>
+      </form>
+
+      <ul class="input-variables">
+        <h4>Input variables: </h4>
+        <li v-for="input in inputs">
+          <p>{{input.name}} goes from <strong>{{input.start}} to {{input.end}}</strong></p>
+        </li>
       </ul>
+      <ul class="output-variables">
+        <h4>Output variables: </h4>
+        <li v-for="output in outputs">
+          <p>{{output.name}} goes from <strong>{{output.start}} to {{output.end}}</strong></p>
+        </li>
+      </ul>
+    </section>
+    
+    <section>
+      <h2><strong>Provide example for your variables: </strong></h2>
+      <form v-on:submit.prevent>
+        <div v-for="input in inputs" class="variable-data">
+          <p>{{input.name}}</p>
+          <input type="text" id="rule-name" v-model="newRuleData.name">
+          <input type="text" id="rule-type" v-model="newRuleData.type">
+          <br>
+          <input type="number" step="any" id="rule-data-1" v-model="newRuleData.data[0]">
+          <input type="number" step="any" id="rule-data-2" v-model="newRuleData.data[1]">
+          <input type="number" step="any" id="rule-data-2" v-model="newRuleData.data[2]">
+          <button @click="addData(input)">Add data</button>
+        </div>
+      </form>
+    </section>
+    
+    <section style="display: none" class="add-rule">
+      <h5>Add new input variable rule:</h5>
+      <form v-on:submit.prevent>
+        <label for="ruleName">Name:</label>
+        <input type="text" id="ruleName" v-model="newRuleData.name">
+        <label for="ruleValue">Value:</label>
+        <input type="number" step="any" id="ruleValue" v-model="newRuleData.value">
+        <button @click="addRule">Add Rule</button>
+      </form>
+      <br>
+    </section>
     <bar-chart 
       :chart-data="chartData"
-      :options="options"
     >
     </bar-chart>
 
@@ -29,26 +82,31 @@ export default {
   name: 'MainPage',
   data() {
     return {
+      projectName: 'My new awesome project :)',
+      exampleData: {
+        values: [],
+      },
       newRuleData: {
         name: 'Name',
-        value: '123',
+        type: 'Type',
+        data: [0, 0, 0],
       },
+      newVariableData: {
+        name: '',
+        start: 0,
+        end: 0,
+        rules: [],
+      },
+      variableType: 'input',
+      inputs: [],
+      outputs: [],
       chartData: {
-        labels: ['Cold', 'Good', 'Hot'],
+        labels: [0, 30, 50],
         datasets: [{
           label: 'MF',
           backgroundColor: '#f87979',
-          data: [-5, 10, 30],
+          data: [1, 0.5, 0.2],
         }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        elements: {
-          line: {
-            tension: 0.2,
-          },
-        },
       },
     };
   },
@@ -61,6 +119,29 @@ export default {
           data: [...this.chartData.datasets[0].data, this.newRuleData.value],
         }],
       };
+    },
+    addInput: function createInput() {
+      if (this.variableType === 'input') {
+        this.inputs = [
+          ...this.inputs,
+          { ...this.newVariableData },
+        ];
+      } else {
+        this.outputs = [
+          ...this.outputs,
+          { ...this.newVariableData },
+        ];
+      }
+    },
+    swapVariable: function changeVariable() {
+      if (this.variableType === 'input') {
+        this.variableType = 'output';
+      } else {
+        this.variableType = 'input';
+      }
+    },
+    addData: function addNewData(req) {
+      console.log(req);
     },
   },
 };
@@ -78,7 +159,6 @@ ul {
 }
 
 li {
-  display: inline-block;
   margin: 0 10px;
 }
 
