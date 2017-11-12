@@ -2,7 +2,6 @@
   <div class="container">
 
     <section class="project-data">
-      <h3>Project data</h3>
       <label for="project-name">Enter name of your project:</label>
       <input type="text" id="project-name" v-model="projectName">
       <br>
@@ -13,11 +12,13 @@
       <form v-on:submit.prevent>
         <h4 @click="swapVariable">
           <span v-if="variableType === 'input'">Input</span>
-          <span v-if="variableType === 'output'">Input</span> 
-          variables
+          <span v-if="variableType === 'output'">Output</span> 
+          variables (click)
         </h4>
         <label for="variableName">Name:</label>
         <input type="text" id="ruleName" v-model="newVariableData.name">
+        <label for="variableNumberOfRules">Number of rules:</label>
+        <input type="text" id="variableNumberOfRules" v-model="newVariableData.numberOfRules">
         <br>
         <label for="ruleRangeStart">Range:</label>
         <input type="number" step="any" id="ruleRangeStart" v-model="newVariableData.start">
@@ -25,6 +26,18 @@
         <input type="number" step="any" id="ruleRangeEnd" v-model="newVariableData.end">
         <button @click="addInput">Add Rule</button>
       </form>
+
+      <section style="display: none" class="add-rule">
+        <h5>Add new input variable rule:</h5>
+        <form v-on:submit.prevent>
+          <label for="ruleName">Name:</label>
+          <input type="text" id="ruleName" v-model="newRuleData.name">
+          <label for="ruleValue">Value:</label>
+          <input type="number" step="any" id="ruleValue" v-model="newRuleData.value">
+          <button @click="addRule">Add Rule</button>
+        </form>
+        <br>
+      </section>
 
       <ul class="input-variables">
         <h4>Input variables: </h4>
@@ -82,7 +95,7 @@ export default {
   name: 'MainPage',
   data() {
     return {
-      projectName: 'My new awesome project :)',
+      projectName: 'My new project',
       exampleData: {
         values: [],
       },
@@ -95,6 +108,7 @@ export default {
         name: '',
         start: 0,
         end: 0,
+        numberOfRules: 1,
         rules: [],
       },
       variableType: 'input',
