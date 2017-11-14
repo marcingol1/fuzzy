@@ -10,8 +10,7 @@
 
 <script>
 export default {
-  name: 'ProjectName',
-  prop: ['projectName']
+  name: 'ProjectName'
 }
 </script>
 

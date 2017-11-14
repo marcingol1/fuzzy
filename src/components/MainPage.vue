@@ -2,10 +2,9 @@
   <div class="container">
 
     <section class="project-data">
+      <h2><strong>{{ projectName }}</strong></h2>
       <label for="project-name">Enter name of your project:</label>
       <input type="text" id="project-name" v-model="projectName">
-      <br>
-      <h2><strong>{{ projectName }}</strong></h2>
     </section>
 
     <section class="project-variables">
@@ -27,22 +26,22 @@
         <button @click="addInput">Add Rule</button>
       </form>
 
-      <section style="display: none" class="add-rule">
-        <h5>Add new input variable rule:</h5>
-        <form v-on:submit.prevent>
-          <label for="ruleName">Name:</label>
-          <input type="text" id="ruleName" v-model="newRuleData.name">
-          <label for="ruleValue">Value:</label>
-          <input type="number" step="any" id="ruleValue" v-model="newRuleData.value">
-          <button @click="addRule">Add Rule</button>
-        </form>
-        <br>
-      </section>
-
       <ul class="input-variables">
         <h4>Input variables: </h4>
         <li v-for="input in inputs">
           <p>{{input.name}} goes from <strong>{{input.start}} to {{input.end}}</strong></p>
+          <section class="add-rule" v-if="input.numberOfRules > input.rules.length">
+            <h5>Add new input variable rule:</h5>
+            <form v-on:submit.prevent>
+              <label for="ruleName">Name:</label>
+              <input type="text" id="ruleName" v-model="newRuleData.name">
+              <label for="ruleValue">Value:</label>
+              <input type="number" step="any" id="ruleValue" v-model="newRuleData.value">
+              <button @click="addRule">Add Rule</button>
+            </form>
+            <br>
+          </section>
+
         </li>
       </ul>
       <ul class="output-variables">
@@ -96,6 +95,7 @@ export default {
   data() {
     return {
       projectName: 'My new project',
+      variableType: 'input',
       exampleData: {
         values: [],
       },
@@ -111,7 +111,6 @@ export default {
         numberOfRules: 1,
         rules: [],
       },
-      variableType: 'input',
       inputs: [],
       outputs: [],
       chartData: {
