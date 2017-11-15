@@ -1,12 +1,10 @@
 <template>
   <div class="container">
-
     <section class="project-data">
       <h2><strong>{{ projectName }}</strong></h2>
       <label for="project-name">Enter name of your project:</label>
       <input type="text" id="project-name" v-model="projectName">
     </section>
-
     <section class="project-variables">
       <form v-on:submit.prevent>
         <h4 @click="swapVariable">
@@ -23,36 +21,52 @@
         <input type="number" step="any" id="ruleRangeStart" v-model="newVariableData.start">
         <label for="ruleRangeEnd">Range:</label>
         <input type="number" step="any" id="ruleRangeEnd" v-model="newVariableData.end">
-        <button @click="addInput">Add Rule</button>
+        <button @click="addVariable">Add variable</button>
       </form>
 
       <ul class="input-variables">
         <h4>Input variables: </h4>
         <li v-for="input in inputs">
           <p>{{input.name}} goes from <strong>{{input.start}} to {{input.end}}</strong></p>
+          <p>Has rules: <span v-for="rule in input.rules">{{rule.name}}, </span></p>
           <section class="add-rule" v-if="input.numberOfRules > input.rules.length">
             <h5>Add new input variable rule:</h5>
             <form v-on:submit.prevent>
               <label for="ruleName">Name:</label>
               <input type="text" id="ruleName" v-model="newRuleData.name">
+              <label for="ruleType">Type:</label>
+              <select id="ruleType">
+                <option v-for="rule in ruleTypes" value="rule">{{rule.name}}</option> 
+              </select>
               <label for="ruleValue">Value:</label>
               <input type="number" step="any" id="ruleValue" v-model="newRuleData.value">
-              <button @click="addRule">Add Rule</button>
+              <button @click="addRule(input)">Add Rule</button>
             </form>
             <br>
           </section>
-
         </li>
       </ul>
       <ul class="output-variables">
         <h4>Output variables: </h4>
         <li v-for="output in outputs">
           <p>{{output.name}} goes from <strong>{{output.start}} to {{output.end}}</strong></p>
+          <p>Has rules: <span v-for="rule in output.rules">{{rule.name}} </span></p>
+          <section class="add-rule" v-if="output.numberOfRules > output.rules.length">
+            <h5>Add new output variable rule:</h5>
+            <form v-on:submit.prevent>
+              <label for="ruleName">Name:</label>
+              <input type="text" id="ruleName" v-model="newRuleData.name">
+              <label for="ruleValue">Value:</label>
+              <input type="number" step="any" id="ruleValue" v-model="newRuleData.value">
+              <button @click="addRule(output)">Add Rule</button>
+            </form>
+            <br>
+          </section>
         </li>
       </ul>
     </section>
     
-    <section>
+    <section style="display: none">
       <h2><strong>Provide example for your variables: </strong></h2>
       <form v-on:submit.prevent>
         <div v-for="input in inputs" class="variable-data">
@@ -67,24 +81,6 @@
         </div>
       </form>
     </section>
-    
-    <section style="display: none" class="add-rule">
-      <h5>Add new input variable rule:</h5>
-      <form v-on:submit.prevent>
-        <label for="ruleName">Name:</label>
-        <input type="text" id="ruleName" v-model="newRuleData.name">
-        <label for="ruleValue">Value:</label>
-        <input type="number" step="any" id="ruleValue" v-model="newRuleData.value">
-        <button @click="addRule">Add Rule</button>
-      </form>
-      <br>
-    </section>
-    <bar-chart 
-      :chart-data="chartData"
-    >
-    </bar-chart>
-
-    <router-link to="/chart">Show chart fullscreen </router-link>
   </div>
 </template>
 
@@ -113,6 +109,25 @@ export default {
       },
       inputs: [],
       outputs: [],
+      ruleTypes: {
+        triangle: {
+          name: 'Triangle',
+          ranges: [0, 0, 0],
+          value: (ranges, value) => {
+            if (value <= ranges[1]) return (value - ranges[0]) / (ranges[1] - ranges[0]);
+            return (ranges[2] - value) / (ranges[2] - ranges[1]);
+          },
+        },
+        trapezoid: {
+          name: 'Trapezoid',
+          ranges: [0, 0, 0, 0],
+          value: (ranges, value) => {
+            if (value <= ranges[1]) return (value - ranges[0]) / (ranges[1] - ranges[0]);
+            else if (value <= ranges[2]) return 1;
+            return (ranges[3] - value) / (ranges[3] - ranges[2]);
+          },
+        },
+      },
       chartData: {
         labels: [0, 30, 50],
         datasets: [{
@@ -124,25 +139,26 @@ export default {
     };
   },
   methods: {
-    addRule: function createRule() {
-      this.chartData = {
-        labels: [...this.chartData.labels, this.newRuleData.name],
-        datasets: [{
-          ...this.chartData.datasets[0],
-          data: [...this.chartData.datasets[0].data, this.newRuleData.value],
-        }],
-      };
+    addRule: function addRuleFunction(input) {
+      // this.chartData = {
+      //   labels: [...this.chartData.labels, this.newRuleData.name],
+      //   datasets: [{
+      //     ...this.chartData.datasets[0],
+      //     data: [...this.chartData.datasets[0].data, this.newRuleData.value],
+      //   }],
+      // };
+      input.rules.push({ ...this.newRuleData });
     },
-    addInput: function createInput() {
+    addVariable: function createInput() {
       if (this.variableType === 'input') {
         this.inputs = [
           ...this.inputs,
-          { ...this.newVariableData },
+          { ...this.newVariableData, rules: [] },
         ];
       } else {
         this.outputs = [
           ...this.outputs,
-          { ...this.newVariableData },
+          { ...this.newVariableData, rules: [] },
         ];
       }
     },
