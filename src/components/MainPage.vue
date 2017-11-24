@@ -26,9 +26,9 @@
 
       <ul class="input-variables">
         <h4>Input variables: </h4>
-        <li v-for="input in inputs">
+        <li v-for="input in inputs" :key="input.name">
           <p>{{input.name}} goes from <strong>{{input.start}} to {{input.end}}</strong></p>
-          <p>Has rules: <span v-for="rule in input.rules">{{rule.name}}, </span></p>
+          <p>Has rules: <span v-for="rule in input.rules" :key="rule.name">{{rule.name}}, </span></p>
           <section class="add-rule" v-if="input.numberOfRules > input.rules.length">
             <h5>Add new input variable rule:</h5>
             <form v-on:submit.prevent>
@@ -36,33 +36,37 @@
               <input type="text" id="ruleName" v-model="newRuleData.name">
               <label for="ruleType">Type:</label>
               <select id="ruleType" v-model="newRuleData.type">
-                <option v-for="rule in ruleTypes" v-bind:value="rule">{{rule.name}}</option> 
+                <option v-for="rule in ruleTypes" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
               </select>
               <label for="ruleValue">Value:</label>
-              <div v-for="(range, index) in newRuleData.type.ranges"> 
+              <div v-for="(range, index) in newRuleData.type.ranges" :key="index"> 
                 <input v-model="newRuleData.type.ranges[index]" type="number" step="any" id="ruleValue">
               </div>
               <button @click="addRule(input)">Add Rule</button>
             </form>
-            <br>
           </section>
         </li>
       </ul>
       <ul class="output-variables">
         <h4>Output variables: </h4>
-        <li v-for="output in outputs">
+        <li v-for="output in outputs" :key="output.name">
           <p>{{output.name}} goes from <strong>{{output.start}} to {{output.end}}</strong></p>
-          <p>Has rules: <span v-for="rule in output.rules">{{rule.name}} </span></p>
+          <p>Has rules: <span v-for="rule in output.rules" :key="rule.name">{{rule.name}} </span></p>
           <section class="add-rule" v-if="output.numberOfRules > output.rules.length">
             <h5>Add new output variable rule:</h5>
             <form v-on:submit.prevent>
               <label for="ruleName">Name:</label>
               <input type="text" id="ruleName" v-model="newRuleData.name">
+              <label for="ruleType">Type:</label>
+              <select id="ruleType" v-model="newRuleData.type">
+                <option v-for="rule in ruleTypes" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
+              </select>
               <label for="ruleValue">Value:</label>
-              <input type="number" step="any" id="ruleValue" v-model="newRuleData.value">
+              <div v-for="(range, index) in newRuleData.type.ranges" :key="index">
+                <input v-model="newRuleData.type.ranges[index]" type="number" step="any" id="ruleValue">
+              </div>
               <button @click="addRule(output)">Add Rule</button>
             </form>
-            <br>
           </section>
         </li>
       </ul>
@@ -71,16 +75,28 @@
     <section id="examples-data">
       <h2><strong>Provide example for your variables: </strong></h2>
       <form v-on:submit.prevent>
-        <div v-for="input in inputs" class="variable-data">
+        <div v-for="input in inputs" class="variable-data" :key="input.name">
           <label for="example-value">{{input.name}}</label>
           <input type="number" step="any" id="example-value" v-model="input.example">
-          <p v-for="rule in input.rules">{{rule.type.value(rule.type.ranges, input.example)}}</p>
+          <span class="contain-level" v-for="rule in input.rules" :key="rule.name">{{rule.type.value(rule.type.ranges, input.example)}}</span>
         </div>
       </form>
     </section>
 
     <section id="connections">
-      <button>Add new connection</button>
+      <form v-on:submit.prevent>
+          <span>Compose your new rule: </span>
+          <span v-for="(input, index) in inputs" :key="index">
+            <select v-model="newConnectionData.rules[index]">
+              <option v-for="(rule, indexRule) in input.rules" :key="indexRule" v-bind:value="rule">
+                {{rule.name}}
+              </option>
+            </select>
+            <span id="norm">{{newConnectionData.type}}</span>
+          </span>
+        <button @click="createConnection">Add new connection</button>
+      </form>
+
     </section>
 
 
@@ -110,8 +126,16 @@ export default {
         rules: [],
         example: 0,
       },
+      newConnectionData: {
+        name: 'name',
+        type: 'AND',
+        rules: [],
+      },
       inputs: [],
       outputs: [],
+      connections: {
+        data: [],
+      },
       ruleTypes: {
         triangle: {
           name: 'Triangle',
@@ -148,6 +172,18 @@ export default {
     };
   },
   methods: {
+    createConnection: function createConnectionFunction() {
+      this.connections = {
+        ...this.connections,
+        data: [
+          ...this.connections.data,
+          {
+            ...this.newConnectionData,
+            rules: [...this.newConnectionData.rules],
+          },
+        ],
+      };
+    },
     addRule: function addRuleFunction(input) {
       // this.chartData = {
       //   labels: [...this.chartData.labels, this.newRuleData.name],
@@ -172,7 +208,6 @@ export default {
         ];
       } else {
         this.outputs = [
-          ...this.outputs,
           { ...this.newVariableData, rules: [] },
         ];
       }
@@ -208,5 +243,9 @@ li {
 
 a {
   color: #42b983;
+}
+
+span {
+  padding: 10px;
 }
 </style>
