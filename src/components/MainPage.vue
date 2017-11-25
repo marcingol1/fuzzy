@@ -83,7 +83,7 @@
       </form>
     </section>
 
-    <section id="connections">
+    <section id="connections" v-if="inputs.length">
       <form v-on:submit.prevent>
           <span>Compose your new rule: </span>
           <span v-for="(input, index) in inputs" :key="index">
@@ -99,7 +99,7 @@
 
     </section>
 
-
+  <project-name />
   </div>
 </template>
 
