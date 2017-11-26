@@ -1,14 +1,19 @@
 <template>
     <section class="project-data">
-      <h3>Project data</h3>
+      <h2><strong>{{ projectName }}</strong></h2>
       <label for="project-name">Enter name of your project:</label>
-      <br>
-      <h2><strong>Some name</strong></h2>
+      <input v-on:input="updateInput($event.target.value)">
     </section>
 </template>
 
 <script>
 export default {
   name: 'ProjectName',
+  props: ['projectName'],
+  methods: {
+    updateInput: function updateInputFunction(value) {
+      this.$emit('input', value);
+    },
+  },
 };
 </script>

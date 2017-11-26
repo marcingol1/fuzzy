@@ -1,10 +1,6 @@
 <template>
   <div class="container">
-    <section class="project-data">
-      <h2><strong>{{ projectName }}</strong></h2>
-      <label for="project-name">Enter name of your project:</label>
-      <input type="text" id="project-name" v-model="projectName">
-    </section>
+    <project-name v-bind:project-name="projectName" v-model="projectName"/>
     <section class="project-variables">
       <form v-on:submit.prevent>
         <h4 @click="swapVariable">
@@ -99,7 +95,6 @@
 
     </section>
 
-  <project-name />
   </div>
 </template>
 
