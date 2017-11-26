@@ -30,14 +30,15 @@
             <form v-on:submit.prevent>
               <label for="ruleName">Name:</label>
               <input type="text" id="ruleName" v-model="rules.newRule.name">
+              <br>
               <label for="ruleType">Type:</label>
               <select id="ruleType" v-model="rules.newRule.type">
                 <option v-for="rule in rules.types" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
               </select>
               <label for="ruleValue">Value:</label>
-              <div v-for="(range, index) in rules.newRule.type.ranges" :key="index"> 
+              <span v-for="(range, index) in rules.newRule.type.ranges" :key="index"> 
                 <input v-model="rules.newRule.type.ranges[index]" type="number" step="any" id="ruleValue">
-              </div>
+              </span>
               <button @click="addRule(input)">Add Rule</button>
             </form>
           </section>
@@ -210,6 +211,10 @@ export default {
     },
   },
 };
+
+/*
+Input/Output 
+*/
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
