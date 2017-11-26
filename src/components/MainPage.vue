@@ -84,12 +84,20 @@
       <form v-on:submit.prevent>
           <span>Compose your new fuzzyArea: </span>
           <span v-for="(input, index) in variables.inputs" :key="index">
-            <select v-model="rules.newRule.fuzzyAreas[index]">
+            <span v-if="index" id="norm">{{rules.newRule.type}}</span>
+            <select v-model="rules.newRule.fuzzyAreas.inputs[index]">
               <option v-for="(fuzzyArea, indexFuzzyArea) in input.fuzzyAreas" :key="indexFuzzyArea" v-bind:value="fuzzyArea">
                 {{fuzzyArea.name}}
               </option>
             </select>
-            <span id="norm">{{rules.newRule.type}}</span>
+          </span>
+          <span>THEN</span>
+          <span v-for="(output, index) in variables.outputs" :key="index">
+            <select v-model="rules.newRule.fuzzyAreas.output">
+              <option v-for="(fuzzyArea, indexFuzzyArea) in output.fuzzyAreas" :key="indexFuzzyArea" v-bind:value="fuzzyArea">
+                {{fuzzyArea.name}}
+              </option>
+            </select>
           </span>
         <button @click="createRule">Add new rule</button>
       </form>
@@ -155,7 +163,10 @@ export default {
         newRule: {
           name: 'name',
           type: 'AND',
-          fuzzyAreas: [],
+          fuzzyAreas: {
+            inputs: [],
+            output: {},
+          },
         },
       },
       chartData: {
@@ -172,13 +183,10 @@ export default {
     createRule() {
       this.rules = {
         ...this.rules,
-        data: [
+        data: { //something wrong in here still ?
           ...this.rules.data,
-          {
-            ...this.rules.newRule,
-            fuzzyAreas: [...this.rules.newRule.fuzzyAreas],
-          },
-        ],
+          fuzzyAreas: { ...this.rules.newRule.fuzzyAreas },
+        },
       };
     },
     addFuzzyArea(input) {
