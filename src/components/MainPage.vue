@@ -83,6 +83,7 @@
     <section id="rules" v-if="variables.inputs.length">
       <form v-on:submit.prevent>
           <span>Compose your new fuzzyArea: </span>
+          <br>
           <label for="rule-name"></label>
           <input type="text" id="rule-name" v-model="rules.newRule.name">
           <span v-for="(input, index) in variables.inputs" :key="index">
