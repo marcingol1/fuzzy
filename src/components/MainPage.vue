@@ -83,6 +83,8 @@
     <section id="rules" v-if="variables.inputs.length">
       <form v-on:submit.prevent>
           <span>Compose your new fuzzyArea: </span>
+          <label for="rule-name"></label>
+          <input type="text" id="rule-name" v-model="rules.newRule.name">
           <span v-for="(input, index) in variables.inputs" :key="index">
             <span v-if="index" id="norm">{{rules.newRule.type}}</span>
             <select v-model="rules.newRule.fuzzyAreas.inputs[index]">
@@ -102,6 +104,12 @@
         <button @click="createRule">Add new rule</button>
       </form>
 
+      <ul class="rules-view">
+        <li v-for="(rule, index) in rules.data" v-bind:key="rule + index">
+          {{rule.name}}
+        </li>
+      </ul>
+
     </section>
 
   </div>
@@ -109,84 +117,26 @@
 
 <script>
 
+import config from '../config/MainPageConfig';
+
 export default {
   name: 'MainPage',
   data() {
-    return {
-      projectName: 'My new project',
-      variables: {
-        variableType: 'input',
-        newVariable: {
-          name: '',
-          start: 0,
-          end: 0,
-          fuzzyAreasCount: 1,
-          fuzzyAreas: [],
-          example: 0,
-        },
-        inputs: [],
-        outputs: [],
-      },
-      fuzzyAreas: {
-        newFuzzyArea: {
-          name: 'Name',
-          type: {},
-        },
-        types: {
-          triangle: {
-            name: 'Triangle',
-            ranges: [0, 0, 0],
-            value: (rangesParam, valueParam) => {
-              const ranges = rangesParam.map(range => parseInt(range, 10));
-              const value = parseInt(valueParam, 10);
-              if (value < ranges[0] || value > ranges[2]) return 0;
-              if (value < ranges[1]) return (value - ranges[0]) / (ranges[1] - ranges[0]);
-              return (ranges[2] - value) / (ranges[2] - ranges[1]);
-            },
-          },
-          trapezoid: {
-            name: 'Trapezoid',
-            ranges: [0, 0, 0, 0],
-            value: (rangesParam, valueParam) => {
-              const ranges = rangesParam.map(range => parseInt(range, 10));
-              const value = parseInt(valueParam, 10);
-              if (value < ranges[0] || value > ranges[3]) return 0;
-              if (value < ranges[1]) return (value - ranges[0]) / (ranges[1] - ranges[0]);
-              else if (value < ranges[2]) return 1;
-              return (ranges[3] - value) / (ranges[3] - ranges[2]);
-            },
-          },
-        },
-      },
-      rules: {
-        data: [],
-        newRule: {
-          name: 'name',
-          type: 'AND',
-          fuzzyAreas: {
-            inputs: [],
-            output: {},
-          },
-        },
-      },
-      chartData: {
-        labels: [0, 30, 50],
-        datasets: [{
-          label: 'MF',
-          backgroundColor: '#f87979',
-          data: [1, 0.5, 0.2],
-        }],
-      },
-    };
+    return config;
   },
   methods: {
     createRule() {
       this.rules = {
         ...this.rules,
-        data: { //something wrong in here still ?
+        data: [
           ...this.rules.data,
-          fuzzyAreas: { ...this.rules.newRule.fuzzyAreas },
-        },
+          {
+            ...this.rules.newRule,
+            fuzzyAreas: {
+              ...this.rules.newRule.fuzzyAreas,
+            },
+          },
+        ],
       };
     },
     addFuzzyArea(input) {
