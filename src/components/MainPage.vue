@@ -8,15 +8,15 @@
           <span v-if="variables.variableType === 'output'">Output</span> 
           variables (click)
         </h4>
-        <label for="variableName">Name:</label>
-        <input type="text" id="fuzzyAreaName" v-model="variables.newVariable.name">
-        <label for="variableNumberOfFuzzyAreas">Number of fuzzyAreas:</label>
-        <input type="text" id="variableNumberOfFuzzyAreas" v-model="variables.newVariable.numberOfFuzzyAreas">
+        <label for="variable-name">Name:</label>
+        <input type="text" id="variable-name" v-model="variables.newVariable.name">
+        <label for="variable-fuzzy-areas-count">Number of fuzzyAreas:</label>
+        <input type="text" id="variable-fuzzy-areas-count" v-model="variables.newVariable.fuzzyAreasCount">
         <br>
-        <label for="fuzzyAreaRangeStart">Range:</label>
-        <input type="number" step="any" id="fuzzyAreaRangeStart" v-model="variables.newVariable.start">
-        <label for="fuzzyAreaRangeEnd">Range:</label>
-        <input type="number" step="any" id="fuzzyAreaRangeEnd" v-model="variables.newVariable.end">
+        <label for="fuzzy-area-range-start">Range:</label>
+        <input type="number" step="any" id="fuzzy-area-range-start" v-model="variables.newVariable.start">
+        <label for="fuzzy-area-range-end">Range:</label>
+        <input type="number" step="any" id="fuzzy-area-range-end" v-model="variables.newVariable.end">
         <button @click="addVariable">Add variable</button>
       </form>
 
@@ -25,17 +25,17 @@
         <li v-for="input in variables.inputs" :key="input.name">
           <p>{{input.name}} goes from <strong>{{input.start}} to {{input.end}}</strong></p>
           <p>Has fuzzyAreas: <span v-for="fuzzyArea in input.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.name}}, </span></p>
-          <section class="add-fuzzyArea" v-if="input.numberOfFuzzyAreas > input.fuzzyAreas.length">
+          <section class="add-fuzzy-area" v-if="input.fuzzyAreasCount > input.fuzzyAreas.length">
             <h5>Add new input variable fuzzyArea:</h5>
             <form v-on:submit.prevent>
-              <label for="fuzzyAreaName">Name:</label>
-              <input type="text" id="fuzzyAreaName" v-model="fuzzyAreas.newFuzzyArea.name">
+              <label for="fuzzy-area-name">Name:</label>
+              <input type="text" id="fuzzy-area-name" v-model="fuzzyAreas.newFuzzyArea.name">
               <br>
-              <label for="fuzzyAreaType">Type:</label>
-              <select id="fuzzyAreaType" v-model="fuzzyAreas.newFuzzyArea.type">
+              <label for="fuzzy-area-type">Type:</label>
+              <select id="fuzzy-area-type" v-model="fuzzyAreas.newFuzzyArea.type">
                 <option v-for="fuzzyArea in fuzzyAreas.types" v-bind:value="fuzzyArea" :key="fuzzyArea.name">{{fuzzyArea.name}}</option> 
               </select>
-              <label for="fuzzyAreaValue">Value:</label>
+              <label for="fuzzy-area-value">Value:</label>
               <span v-for="(range, index) in fuzzyAreas.newFuzzyArea.type.ranges" :key="index"> 
                 <input v-model="fuzzyAreas.newFuzzyArea.type.ranges[index]" type="number" step="any" id="fuzzyAreaValue">
               </span>
@@ -49,16 +49,16 @@
         <li v-for="output in variables.outputs" :key="output.name">
           <p>{{output.name}} goes from <strong>{{output.start}} to {{output.end}}</strong></p>
           <p>Has fuzzyAreas: <span v-for="fuzzyArea in output.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.name}} </span></p>
-          <section class="add-fuzzyArea" v-if="output.numberOfFuzzyAreas > output.fuzzyAreas.length">
+          <section class="add-fuzzy-area" v-if="output.fuzzyAreasCount > output.fuzzyAreas.length">
             <h5>Add new output variable fuzzyArea:</h5>
             <form v-on:submit.prevent>
-              <label for="fuzzyAreaName">Name:</label>
-              <input type="text" id="fuzzyAreaName" v-model="fuzzyAreas.newFuzzyArea.name">
-              <label for="fuzzyAreaType">Type:</label>
-              <select id="fuzzyAreaType" v-model="fuzzyAreas.newFuzzyArea.type">
+              <label for="fuzzy-area-name">Name:</label>
+              <input type="text" id="fuzzy-area-name" v-model="fuzzyAreas.newFuzzyArea.name">
+              <label for="fuzzy-area-type">Type:</label>
+              <select id="fuzzy-area-type" v-model="fuzzyAreas.newFuzzyArea.type">
                 <option v-for="fuzzyArea in fuzzyAreas.types" v-bind:value="fuzzyArea" :key="fuzzyArea.name">{{fuzzyArea.name}}</option> 
               </select>
-              <label for="fuzzyAreaValue">Value:</label>
+              <label for="fuzzy-area-value">Value:</label>
               <div v-for="(range, index) in fuzzyAreas.newFuzzyArea.type.ranges" :key="index">
                 <input v-model="fuzzyAreas.newFuzzyArea.type.ranges[index]" type="number" step="any" id="fuzzyAreaValue">
               </div>
@@ -112,7 +112,7 @@ export default {
           name: '',
           start: 0,
           end: 0,
-          numberOfFuzzyAreas: 1,
+          fuzzyAreasCount: 1,
           fuzzyAreas: [],
           example: 0,
         },
@@ -212,9 +212,6 @@ export default {
   },
 };
 
-/*
-Input/Output 
-*/
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
