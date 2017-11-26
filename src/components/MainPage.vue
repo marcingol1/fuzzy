@@ -9,14 +9,14 @@
           variables (click)
         </h4>
         <label for="variableName">Name:</label>
-        <input type="text" id="ruleName" v-model="variables.newVariable.name">
-        <label for="variableNumberOfRules">Number of rules:</label>
-        <input type="text" id="variableNumberOfRules" v-model="variables.newVariable.numberOfRules">
+        <input type="text" id="fuzzyAreaName" v-model="variables.newVariable.name">
+        <label for="variableNumberOfFuzzyAreas">Number of fuzzyAreas:</label>
+        <input type="text" id="variableNumberOfFuzzyAreas" v-model="variables.newVariable.numberOfFuzzyAreas">
         <br>
-        <label for="ruleRangeStart">Range:</label>
-        <input type="number" step="any" id="ruleRangeStart" v-model="variables.newVariable.start">
-        <label for="ruleRangeEnd">Range:</label>
-        <input type="number" step="any" id="ruleRangeEnd" v-model="variables.newVariable.end">
+        <label for="fuzzyAreaRangeStart">Range:</label>
+        <input type="number" step="any" id="fuzzyAreaRangeStart" v-model="variables.newVariable.start">
+        <label for="fuzzyAreaRangeEnd">Range:</label>
+        <input type="number" step="any" id="fuzzyAreaRangeEnd" v-model="variables.newVariable.end">
         <button @click="addVariable">Add variable</button>
       </form>
 
@@ -24,22 +24,22 @@
         <h4>Input variables: </h4>
         <li v-for="input in variables.inputs" :key="input.name">
           <p>{{input.name}} goes from <strong>{{input.start}} to {{input.end}}</strong></p>
-          <p>Has rules: <span v-for="rule in input.rules" :key="rule.name">{{rule.name}}, </span></p>
-          <section class="add-rule" v-if="input.numberOfRules > input.rules.length">
-            <h5>Add new input variable rule:</h5>
+          <p>Has fuzzyAreas: <span v-for="fuzzyArea in input.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.name}}, </span></p>
+          <section class="add-fuzzyArea" v-if="input.numberOfFuzzyAreas > input.fuzzyAreas.length">
+            <h5>Add new input variable fuzzyArea:</h5>
             <form v-on:submit.prevent>
-              <label for="ruleName">Name:</label>
-              <input type="text" id="ruleName" v-model="rules.newRule.name">
+              <label for="fuzzyAreaName">Name:</label>
+              <input type="text" id="fuzzyAreaName" v-model="fuzzyAreas.newFuzzyArea.name">
               <br>
-              <label for="ruleType">Type:</label>
-              <select id="ruleType" v-model="rules.newRule.type">
-                <option v-for="rule in rules.types" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
+              <label for="fuzzyAreaType">Type:</label>
+              <select id="fuzzyAreaType" v-model="fuzzyAreas.newFuzzyArea.type">
+                <option v-for="fuzzyArea in fuzzyAreas.types" v-bind:value="fuzzyArea" :key="fuzzyArea.name">{{fuzzyArea.name}}</option> 
               </select>
-              <label for="ruleValue">Value:</label>
-              <span v-for="(range, index) in rules.newRule.type.ranges" :key="index"> 
-                <input v-model="rules.newRule.type.ranges[index]" type="number" step="any" id="ruleValue">
+              <label for="fuzzyAreaValue">Value:</label>
+              <span v-for="(range, index) in fuzzyAreas.newFuzzyArea.type.ranges" :key="index"> 
+                <input v-model="fuzzyAreas.newFuzzyArea.type.ranges[index]" type="number" step="any" id="fuzzyAreaValue">
               </span>
-              <button @click="addRule(input)">Add Rule</button>
+              <button @click="addFuzzyArea(input)">Add FuzzyArea</button>
             </form>
           </section>
         </li>
@@ -48,21 +48,21 @@
         <h4>Output variables: </h4>
         <li v-for="output in variables.outputs" :key="output.name">
           <p>{{output.name}} goes from <strong>{{output.start}} to {{output.end}}</strong></p>
-          <p>Has rules: <span v-for="rule in output.rules" :key="rule.name">{{rule.name}} </span></p>
-          <section class="add-rule" v-if="output.numberOfRules > output.rules.length">
-            <h5>Add new output variable rule:</h5>
+          <p>Has fuzzyAreas: <span v-for="fuzzyArea in output.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.name}} </span></p>
+          <section class="add-fuzzyArea" v-if="output.numberOfFuzzyAreas > output.fuzzyAreas.length">
+            <h5>Add new output variable fuzzyArea:</h5>
             <form v-on:submit.prevent>
-              <label for="ruleName">Name:</label>
-              <input type="text" id="ruleName" v-model="rules.newRule.name">
-              <label for="ruleType">Type:</label>
-              <select id="ruleType" v-model="rules.newRule.type">
-                <option v-for="rule in rules.types" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
+              <label for="fuzzyAreaName">Name:</label>
+              <input type="text" id="fuzzyAreaName" v-model="fuzzyAreas.newFuzzyArea.name">
+              <label for="fuzzyAreaType">Type:</label>
+              <select id="fuzzyAreaType" v-model="fuzzyAreas.newFuzzyArea.type">
+                <option v-for="fuzzyArea in fuzzyAreas.types" v-bind:value="fuzzyArea" :key="fuzzyArea.name">{{fuzzyArea.name}}</option> 
               </select>
-              <label for="ruleValue">Value:</label>
-              <div v-for="(range, index) in rules.newRule.type.ranges" :key="index">
-                <input v-model="rules.newRule.type.ranges[index]" type="number" step="any" id="ruleValue">
+              <label for="fuzzyAreaValue">Value:</label>
+              <div v-for="(range, index) in fuzzyAreas.newFuzzyArea.type.ranges" :key="index">
+                <input v-model="fuzzyAreas.newFuzzyArea.type.ranges[index]" type="number" step="any" id="fuzzyAreaValue">
               </div>
-              <button @click="addRule(output)">Add Rule</button>
+              <button @click="addFuzzyArea(output)">Add FuzzyArea</button>
             </form>
           </section>
         </li>
@@ -75,23 +75,23 @@
         <div v-for="input in variables.inputs" class="variable-data" :key="input.name">
           <label for="example-value">{{input.name}}</label>
           <input type="number" step="any" id="example-value" v-model="input.example">
-          <span class="contain-level" v-for="rule in input.rules" :key="rule.name">{{rule.type.value(rule.type.ranges, input.example)}}</span>
+          <span class="contain-level" v-for="fuzzyArea in input.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.type.value(fuzzyArea.type.ranges, input.example)}}</span>
         </div>
       </form>
     </section>
 
-    <section id="connections" v-if="variables.inputs.length">
+    <section id="rules" v-if="variables.inputs.length">
       <form v-on:submit.prevent>
-          <span>Compose your new rule: </span>
+          <span>Compose your new fuzzyArea: </span>
           <span v-for="(input, index) in variables.inputs" :key="index">
-            <select v-model="connections.newConnection.rules[index]">
-              <option v-for="(rule, indexRule) in input.rules" :key="indexRule" v-bind:value="rule">
-                {{rule.name}}
+            <select v-model="rules.newRule.fuzzyAreas[index]">
+              <option v-for="(fuzzyArea, indexFuzzyArea) in input.fuzzyAreas" :key="indexFuzzyArea" v-bind:value="fuzzyArea">
+                {{fuzzyArea.name}}
               </option>
             </select>
-            <span id="norm">{{connections.newConnection.type}}</span>
+            <span id="norm">{{rules.newRule.type}}</span>
           </span>
-        <button @click="createConnection">Add new connection</button>
+        <button @click="createRule">Add new rule</button>
       </form>
 
     </section>
@@ -112,15 +112,15 @@ export default {
           name: '',
           start: 0,
           end: 0,
-          numberOfRules: 1,
-          rules: [],
+          numberOfFuzzyAreas: 1,
+          fuzzyAreas: [],
           example: 0,
         },
         inputs: [],
         outputs: [],
       },
-      rules: {
-        newRule: {
+      fuzzyAreas: {
+        newFuzzyArea: {
           name: 'Name',
           type: {},
         },
@@ -150,12 +150,12 @@ export default {
           },
         },
       },
-      connections: {
+      rules: {
         data: [],
-        newConnection: {
+        newRule: {
           name: 'name',
           type: 'AND',
-          rules: [],
+          fuzzyAreas: [],
         },
       },
       chartData: {
@@ -169,24 +169,24 @@ export default {
     };
   },
   methods: {
-    createConnection() {
-      this.connections = {
-        ...this.connections,
+    createRule() {
+      this.rules = {
+        ...this.rules,
         data: [
-          ...this.connections.data,
+          ...this.rules.data,
           {
-            ...this.connections.newConnection,
-            rules: [...this.connections.newConnection.rules],
+            ...this.rules.newRule,
+            fuzzyAreas: [...this.rules.newRule.fuzzyAreas],
           },
         ],
       };
     },
-    addRule(input) {
-      input.rules.push({
-        ...this.rules.newRule,
+    addFuzzyArea(input) {
+      input.fuzzyAreas.push({
+        ...this.fuzzyAreas.newFuzzyArea,
         type: {
-          ...this.rules.newRule.type,
-          ranges: [...this.rules.newRule.type.ranges],
+          ...this.fuzzyAreas.newFuzzyArea.type,
+          ranges: [...this.fuzzyAreas.newFuzzyArea.type.ranges],
         },
       });
     },
@@ -194,11 +194,11 @@ export default {
       if (this.variables.variableType === 'input') {
         this.variables.inputs = [
           ...this.variables.inputs,
-          { ...this.variables.newVariable, rules: [] },
+          { ...this.variables.newVariable, fuzzyAreas: [] },
         ];
       } else {
         this.variables.outputs = [
-          { ...this.variables.newVariable, rules: [] },
+          { ...this.variables.newVariable, fuzzyAreas: [] },
         ];
       }
     },
