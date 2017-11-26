@@ -4,39 +4,39 @@
     <section class="project-variables">
       <form v-on:submit.prevent>
         <h4 @click="swapVariable">
-          <span v-if="variableType === 'input'">Input</span>
-          <span v-if="variableType === 'output'">Output</span> 
+          <span v-if="variables.variableType === 'input'">Input</span>
+          <span v-if="variables.variableType === 'output'">Output</span> 
           variables (click)
         </h4>
         <label for="variableName">Name:</label>
-        <input type="text" id="ruleName" v-model="newVariableData.name">
+        <input type="text" id="ruleName" v-model="variables.newVariableData.name">
         <label for="variableNumberOfRules">Number of rules:</label>
-        <input type="text" id="variableNumberOfRules" v-model="newVariableData.numberOfRules">
+        <input type="text" id="variableNumberOfRules" v-model="variables.newVariableData.numberOfRules">
         <br>
         <label for="ruleRangeStart">Range:</label>
-        <input type="number" step="any" id="ruleRangeStart" v-model="newVariableData.start">
+        <input type="number" step="any" id="ruleRangeStart" v-model="variables.newVariableData.start">
         <label for="ruleRangeEnd">Range:</label>
-        <input type="number" step="any" id="ruleRangeEnd" v-model="newVariableData.end">
+        <input type="number" step="any" id="ruleRangeEnd" v-model="variables.newVariableData.end">
         <button @click="addVariable">Add variable</button>
       </form>
 
       <ul class="input-variables">
         <h4>Input variables: </h4>
-        <li v-for="input in inputs" :key="input.name">
+        <li v-for="input in variables.inputs" :key="input.name">
           <p>{{input.name}} goes from <strong>{{input.start}} to {{input.end}}</strong></p>
           <p>Has rules: <span v-for="rule in input.rules" :key="rule.name">{{rule.name}}, </span></p>
           <section class="add-rule" v-if="input.numberOfRules > input.rules.length">
             <h5>Add new input variable rule:</h5>
             <form v-on:submit.prevent>
               <label for="ruleName">Name:</label>
-              <input type="text" id="ruleName" v-model="newRuleData.name">
+              <input type="text" id="ruleName" v-model="rules.newRuleData.name">
               <label for="ruleType">Type:</label>
-              <select id="ruleType" v-model="newRuleData.type">
-                <option v-for="rule in ruleTypes" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
+              <select id="ruleType" v-model="rules.newRuleData.type">
+                <option v-for="rule in rules.types" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
               </select>
               <label for="ruleValue">Value:</label>
-              <div v-for="(range, index) in newRuleData.type.ranges" :key="index"> 
-                <input v-model="newRuleData.type.ranges[index]" type="number" step="any" id="ruleValue">
+              <div v-for="(range, index) in rules.newRuleData.type.ranges" :key="index"> 
+                <input v-model="rules.newRuleData.type.ranges[index]" type="number" step="any" id="ruleValue">
               </div>
               <button @click="addRule(input)">Add Rule</button>
             </form>
@@ -52,14 +52,14 @@
             <h5>Add new output variable rule:</h5>
             <form v-on:submit.prevent>
               <label for="ruleName">Name:</label>
-              <input type="text" id="ruleName" v-model="newRuleData.name">
+              <input type="text" id="ruleName" v-model="rules.newRuleData.name">
               <label for="ruleType">Type:</label>
-              <select id="ruleType" v-model="newRuleData.type">
-                <option v-for="rule in ruleTypes" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
+              <select id="ruleType" v-model="rules.newRuleData.type">
+                <option v-for="rule in rules.types" v-bind:value="rule" :key="rule.name">{{rule.name}}</option> 
               </select>
               <label for="ruleValue">Value:</label>
-              <div v-for="(range, index) in newRuleData.type.ranges" :key="index">
-                <input v-model="newRuleData.type.ranges[index]" type="number" step="any" id="ruleValue">
+              <div v-for="(range, index) in rules.newRuleData.type.ranges" :key="index">
+                <input v-model="rules.newRuleData.type.ranges[index]" type="number" step="any" id="ruleValue">
               </div>
               <button @click="addRule(output)">Add Rule</button>
             </form>
@@ -71,7 +71,7 @@
     <section id="examples-data">
       <h2><strong>Provide example for your variables: </strong></h2>
       <form v-on:submit.prevent>
-        <div v-for="input in inputs" class="variable-data" :key="input.name">
+        <div v-for="input in variables.inputs" class="variable-data" :key="input.name">
           <label for="example-value">{{input.name}}</label>
           <input type="number" step="any" id="example-value" v-model="input.example">
           <span class="contain-level" v-for="rule in input.rules" :key="rule.name">{{rule.type.value(rule.type.ranges, input.example)}}</span>
@@ -79,10 +79,10 @@
       </form>
     </section>
 
-    <section id="connections" v-if="inputs.length">
+    <section id="connections" v-if="variables.inputs.length">
       <form v-on:submit.prevent>
           <span>Compose your new rule: </span>
-          <span v-for="(input, index) in inputs" :key="index">
+          <span v-for="(input, index) in variables.inputs" :key="index">
             <select v-model="newConnectionData.rules[index]">
               <option v-for="(rule, indexRule) in input.rules" :key="indexRule" v-bind:value="rule">
                 {{rule.name}}
@@ -105,22 +105,52 @@ export default {
   data() {
     return {
       projectName: 'My new project',
-      variableType: 'input',
-      exampleData: {
-        values: [],
+      variables: {
+        variableType: 'input',
+        newVariableData: {
+          name: '',
+          start: 0,
+          end: 0,
+          numberOfRules: 1,
+          rules: [],
+          example: 0,
+        },
+        inputs: [],
+        outputs: [],
       },
-      newRuleData: {
-        name: 'Name',
-        type: {},
+      rules: {
+        newRuleData: {
+          name: 'Name',
+          type: {},
+        },
+        types: {
+          triangle: {
+            name: 'Triangle',
+            ranges: [0, 0, 0],
+            value: (rangesParam, valueParam) => {
+              const ranges = rangesParam.map(range => parseInt(range, 10));
+              const value = parseInt(valueParam, 10);
+              if (value < ranges[0] || value > ranges[2]) return 0;
+              if (value < ranges[1]) return (value - ranges[0]) / (ranges[1] - ranges[0]);
+              return (ranges[2] - value) / (ranges[2] - ranges[1]);
+            },
+          },
+          trapezoid: {
+            name: 'Trapezoid',
+            ranges: [0, 0, 0, 0],
+            value: (rangesParam, valueParam) => {
+              const ranges = rangesParam.map(range => parseInt(range, 10));
+              const value = parseInt(valueParam, 10);
+              if (value < ranges[0] || value > ranges[3]) return 0;
+              if (value < ranges[1]) return (value - ranges[0]) / (ranges[1] - ranges[0]);
+              else if (value < ranges[2]) return 1;
+              return (ranges[3] - value) / (ranges[3] - ranges[2]);
+            },
+          },
+        },
       },
-      newVariableData: {
-        name: '',
-        start: 0,
-        end: 0,
-        numberOfRules: 1,
-        rules: [],
-        example: 0,
-      },
+      // connections: {
+      // },
       newConnectionData: {
         name: 'name',
         type: 'AND',
@@ -131,7 +161,7 @@ export default {
       connections: {
         data: [],
       },
-      ruleTypes: {
+      types: {
         triangle: {
           name: 'Triangle',
           ranges: [0, 0, 0],
@@ -167,7 +197,7 @@ export default {
     };
   },
   methods: {
-    createConnection: function createConnectionFunction() {
+    createConnection() {
       this.connections = {
         ...this.connections,
         data: [
@@ -179,43 +209,33 @@ export default {
         ],
       };
     },
-    addRule: function addRuleFunction(input) {
-      // this.chartData = {
-      //   labels: [...this.chartData.labels, this.newRuleData.name],
-      //   datasets: [{
-      //     ...this.chartData.datasets[0],
-      //     data: [...this.chartData.datasets[0].data, this.newRuleData.value],
-      //   }],
-      // };
+    addRule(input) {
       input.rules.push({
-        ...this.newRuleData,
+        ...this.rules.newRuleData,
         type: {
-          ...this.newRuleData.type,
-          ranges: [...this.newRuleData.type.ranges],
+          ...this.rules.newRuleData.type,
+          ranges: [...this.rules.newRuleData.type.ranges],
         },
       });
     },
-    addVariable: function createInput() {
-      if (this.variableType === 'input') {
-        this.inputs = [
-          ...this.inputs,
-          { ...this.newVariableData, rules: [] },
+    addVariable() {
+      if (this.variables.variableType === 'input') {
+        this.variables.inputs = [
+          ...this.variables.inputs,
+          { ...this.variables.newVariableData, rules: [] },
         ];
       } else {
-        this.outputs = [
-          { ...this.newVariableData, rules: [] },
+        this.variables.outputs = [
+          { ...this.variables.newVariableData, rules: [] },
         ];
       }
     },
-    swapVariable: function changeVariable() {
-      if (this.variableType === 'input') {
-        this.variableType = 'output';
+    swapVariable() {
+      if (this.variables.variableType === 'input') {
+        this.variables.variableType = 'output';
       } else {
-        this.variableType = 'input';
+        this.variables.variableType = 'input';
       }
-    },
-    addData: function addNewData(req) {
-      console.log(req);
     },
   },
 };
