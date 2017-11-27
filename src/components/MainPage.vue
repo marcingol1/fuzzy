@@ -111,6 +111,7 @@
           <span>{{rule.name}} has: {{rule.fuzzyAreas.output.name}} of: {{rule.result}}</span>
         </li>
       </ul>
+      <button @click="getResult">Log result</button>
 
     </section>
 
@@ -127,6 +128,13 @@ export default {
     return config;
   },
   methods: {
+    getResult() {
+      let res = { result: 0 };
+      this.rules.data.forEach((element) => {
+        if (element.result > res.result) res = element;
+      });
+      console.log(res.fuzzyAreas.output.type.ranges[0]);
+    },
     toggleNorm() {
       let newNorm;
       if (this.rules.newRule.type === 'AND') newNorm = 'OR';
