@@ -24,7 +24,7 @@
         <h4>Input variables: </h4>
         <li v-for="input in variables.inputs" :key="input.name">
           <p>{{input.name}} goes from <strong>{{input.start}} to {{input.end}}</strong></p>
-          <p>Has fuzzyAreas: <span v-for="fuzzyArea in input.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.name}}, </span></p>
+          <p>FuzzyAreas: <span v-for="fuzzyArea in input.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.name}} </span></p>
           <section class="add-fuzzy-area" v-if="input.fuzzyAreasCount > input.fuzzyAreas.length">
             <h5>Add new input variable fuzzyArea:</h5>
             <form v-on:submit.prevent>
@@ -48,7 +48,7 @@
         <h4>Output variables: </h4>
         <li v-for="output in variables.outputs" :key="output.name">
           <p>{{output.name}} goes from <strong>{{output.start}} to {{output.end}}</strong></p>
-          <p>Has fuzzyAreas: <span v-for="fuzzyArea in output.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.name}} </span></p>
+          <p>FuzzyAreas: <span v-for="fuzzyArea in output.fuzzyAreas" :key="fuzzyArea.name">{{fuzzyArea.name}} </span></p>
           <section class="add-fuzzy-area" v-if="output.fuzzyAreasCount > output.fuzzyAreas.length">
             <h5>Add new output variable fuzzyArea:</h5>
             <form v-on:submit.prevent>
@@ -86,8 +86,9 @@
           <br>
           <label for="rule-name"></label>
           <input type="text" id="rule-name" v-model="rules.newRule.name">
+          <span>IF</span>
           <span v-for="(input, index) in variables.inputs" :key="index">
-            <span v-if="index" id="norm">{{rules.newRule.type}}</span>
+            <span v-if="index" id="norm" @click="toggleNorm">{{rules.newRule.type}}</span>
             <select v-model="rules.newRule.fuzzyAreas.inputs[index]">
               <option v-for="(fuzzyArea, indexFuzzyArea) in input.fuzzyAreas" :key="indexFuzzyArea" v-bind:value="fuzzyArea">
                 {{fuzzyArea.name}}
@@ -107,7 +108,7 @@
 
       <ul class="rules-view">
         <li v-for="(rule, index) in rules.data" v-bind:key="rule + index">
-          {{rule.name}}
+          <span>{{rule.name}} has: {{rule.fuzzyAreas.output.name}} of: {{rule.result}}</span>
         </li>
       </ul>
 
@@ -126,6 +127,26 @@ export default {
     return config;
   },
   methods: {
+    toggleNorm() {
+      let newNorm;
+      if (this.rules.newRule.type === 'AND') newNorm = 'OR';
+      else newNorm = 'AND';
+      this.rules.newRule = {
+        ...this.rules.newRule,
+        type: newNorm,
+      };
+    },
+    checkValue(rule) {
+      const compareFunction = rule.type === 'AND' ? Math.min : Math.max;
+      const inputs = rule.fuzzyAreas.inputs;
+      const data = [];
+      inputs.forEach((element, index) => {
+        const example = this.variables.inputs[index].example;
+        data.push(element.type.value(element.type.ranges, example));
+      });
+      const result = data.reduce((next, prev) => compareFunction(next, prev));
+      return result;
+    },
     createRule() {
       this.rules = {
         ...this.rules,
@@ -134,8 +155,10 @@ export default {
           {
             ...this.rules.newRule,
             fuzzyAreas: {
-              ...this.rules.newRule.fuzzyAreas,
+              inputs: [...this.rules.newRule.fuzzyAreas.inputs],
+              output: { ...this.rules.newRule.fuzzyAreas.output },
             },
+            result: this.checkValue(this.rules.newRule),
           },
         ],
       };

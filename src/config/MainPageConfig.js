@@ -76,6 +76,7 @@ const exampleVariables = {
       start: -20,
       end: 40,
       fuzzyAreasCount: 4,
+      example: 22,
       fuzzyAreas: [
         {
           name: 'Freezing',
@@ -110,13 +111,13 @@ const exampleVariables = {
           },
         },
       ],
-      example: 22,
     },
     {
       name: 'Humidity',
       start: 0,
       end: 100,
       fuzzyAreasCount: 4,
+      example: 45,
       fuzzyAreas: [
         {
           name: 'Only air',
@@ -151,7 +152,6 @@ const exampleVariables = {
           },
         },
       ],
-      example: 45,
     },
   ],
   outputs: [
